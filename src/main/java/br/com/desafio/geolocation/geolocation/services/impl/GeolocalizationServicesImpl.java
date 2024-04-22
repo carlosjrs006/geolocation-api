@@ -74,7 +74,7 @@ public class GeolocalizationServicesImpl implements GeolocalizationService {
         geoLocalization.setLongitude(infoLocalizationResquest.getLongitude());
         geoLocalization.setLatitude(infoLocalizationResquest.getLatitude());
         geoLocalization.setEnderecoLocalizado(localizationByLongituteAndLatitude.getResults().get(0).getFormatted_address());
-        geoLocalization.setDataConsulta(LocalDateTime.now());
+        geoLocalization.setDataConsulta(LocalDateTime.now().atZone(ZoneId.of("America/Sao_Paulo")).toLocalDateTime());
         try{
             geoLocalizationRepository.save(geoLocalization);
 
