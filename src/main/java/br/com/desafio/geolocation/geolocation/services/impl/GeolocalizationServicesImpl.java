@@ -22,6 +22,7 @@ import org.springframework.web.client.HttpClientErrorException;
 
 import java.time.LocalDateTime;
 import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Objects;
@@ -94,9 +95,12 @@ public class GeolocalizationServicesImpl implements GeolocalizationService {
                 .build();
     }
 
+
     private String formatDate(LocalDateTime dataconsulta){
+        ZoneId zonaBrasil = ZoneId.of("America/Sao_Paulo");
+        ZonedDateTime zonedDateTime = dataconsulta.atZone(zonaBrasil);
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss");
-        return dataconsulta.format(formatter);
+        return zonedDateTime.format(formatter);
     }
 
     private InfoLocalizationResponse montarViewReponse(ApiGoogleGeocodingResponse localizationByLongituteAndLatitude,InfoLocalizationResquest infoLocalizationResquest){
