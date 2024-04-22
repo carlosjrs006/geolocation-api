@@ -13,8 +13,8 @@ public class CorsConfig implements WebMvcConfigurer {
     @Override
     public void addCorsMappings(CorsRegistry registry) {
         registry.addMapping("/**")
-                .allowedOriginPatterns("http://localhost:4200","https://geolocation-front.vercel.app/")
-                .allowedOrigins("http://localhost:4200","https://geolocation-front.vercel.app/")
+                .allowedOriginPatterns("https://geolocation-front.vercel.app","http://localhost:4200")
+                .allowedOrigins("https://geolocation-front.vercel.app","http://localhost:4200")
                 .allowedMethods("*")
                 .allowedHeaders("*")
                 .exposedHeaders("Authorization")
