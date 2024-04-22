@@ -54,9 +54,9 @@ public class GeolocalizationServicesImpl implements GeolocalizationService {
             ApiGoogleGeocodingResponse localizationByLongituteAndLatitude = apiGoogleLocalizationClient.findLocalizationByLongituteAndLatitude(latLng, apikey);
             System.out.println("localizationByLongituteAndLatitude: " + localizationByLongituteAndLatitude);
 
-            salvarConsultaRepository(localizationByLongituteAndLatitude,infoLocalizationResquest);
+            GeoLocalization geoLocalization = salvarConsultaRepository(localizationByLongituteAndLatitude, infoLocalizationResquest);
 
-            return montarViewReponse(localizationByLongituteAndLatitude,infoLocalizationResquest);
+            return montarViewReponse(geoLocalization);
         } catch (Exception ex) {
             throw new RuntimeException("Erro ao chamar a API do Google Geocoding", ex);
         }
@@ -69,7 +69,7 @@ public class GeolocalizationServicesImpl implements GeolocalizationService {
         return allHistoric.map(this::montarViewReponseList);
     }
 
-    private void salvarConsultaRepository(ApiGoogleGeocodingResponse localizationByLongituteAndLatitude, InfoLocalizationResquest infoLocalizationResquest){
+    private GeoLocalization salvarConsultaRepository(ApiGoogleGeocodingResponse localizationByLongituteAndLatitude, InfoLocalizationResquest infoLocalizationResquest){
 
         GeoLocalization geoLocalization = new GeoLocalization();
         geoLocalization.setLongitude(infoLocalizationResquest.getLongitude());
@@ -77,7 +77,7 @@ public class GeolocalizationServicesImpl implements GeolocalizationService {
         geoLocalization.setEnderecoLocalizado(localizationByLongituteAndLatitude.getResults().get(0).getFormatted_address());
         geoLocalization.setDataConsulta(LocalDateTime.now().atZone(ZoneId.of("America/Sao_Paulo")).toLocalDateTime());
         try{
-            geoLocalizationRepository.save(geoLocalization);
+            return geoLocalizationRepository.save(geoLocalization);
 
         }catch (Exception e){
             throw new RuntimeException("Error ao salvar repository");
@@ -103,11 +103,12 @@ public class GeolocalizationServicesImpl implements GeolocalizationService {
         return zonedDateTime.format(formatter);
     }
 
-    private InfoLocalizationResponse montarViewReponse(ApiGoogleGeocodingResponse localizationByLongituteAndLatitude,InfoLocalizationResquest infoLocalizationResquest){
+    private InfoLocalizationResponse montarViewReponse(GeoLocalization geoLocalization){
         return InfoLocalizationResponse.builder()
-                .longitude(infoLocalizationResquest.getLongitude())
-                .latitude(infoLocalizationResquest.getLatitude())
-                .results(localizationByLongituteAndLatitude.getResults().get(0).getFormatted_address())
+                .longitude(geoLocalization.getLongitude())
+                .latitude(geoLocalization.getLatitude())
+                .results(geoLocalization.getEnderecoLocalizado())
+                .dateTime(formatDate(geoLocalization.getDataConsulta()))
                 .build();
     }
 }
